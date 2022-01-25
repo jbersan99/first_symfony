@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Category;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use App\Entity\Product;
 use Doctrine\Persistence\ManagerRegistry;
@@ -13,48 +14,56 @@ use App\Repository\ProductRepository;
 class ProductController extends AbstractController
 {
     /**
-     * @Route("/product", name="create_product")
+     * @Route("/product/{category_name}", name="create_product")
      */
-    public function createProduct(ManagerRegistry $doctrine, ValidatorInterface $validator): Response
+    public function createProduct(ManagerRegistry $doctrine, string $category_name): Response
     {
-        $entityManager = $doctrine->getManager();
+        $category = new Category();
+        $category->setName($category_name);
 
         $product = new Product();
-        $product->setName("Raton");
-        $product->setPrice(100);
+        $product->setName("Teclado");
+        $product->setPrice(200);
         $product->setDescription('Ergonomic and stylish!');
 
-        $errors = $validator->validate($product);
-        if (count($errors) > 0) {
-            return new Response((string) $errors, 400);
-        } else {
-            // tell Doctrine you want to (eventually) save the Product (no queries yet)
-            $entityManager->persist($product);
+        $product->setCategory($category);
 
-            // actually executes the queries
-            $entityManager->flush();
+        $entityManager = $doctrine->getManager();
+        $entityManager->persist($category);
+        $entityManager->persist($product);
+        $entityManager->flush();
 
-            return new Response('Nuevo producto guardado con el id ' . $product->getId());
-        }
+        return new Response(
+            'Nuevo producto guardado con el nombre: ' . $product->getName()
+                . ' y su categoria es : ' . $category->getName()
+        );
     }
 
     /**
-     * @Route("/product/{id}", name="product_show")
+     * @Route("/product_show/{id}", name="product_show")
      */
-    public function show(int $id, ProductRepository $productRepository): Response
+    public function show(ManagerRegistry $doctrine, int $id): Response
     {
-        $product = $productRepository->find($id);
+        $product = $doctrine->getRepository(Product::class)->find($id);
 
-        if (!$product) {
-            throw $this->createNotFoundException(
-                'No se encontro el producto con ' . $id
-            );
-        }
+        $categoryName = $product->getCategory()->getName();
 
-        return new Response('Revisa este producto: ' . $product->getName());
+        return new Response('El producto con nombre ' . $product->getName() . ' y su categoria es ' . $categoryName);
+    }
 
-        // or render a template
-        // in the template, print things with {{ product.name }}
-        // return $this->render('product/show.html.twig', ['product' => $product]);
+
+    /**
+     * @Route("/products/{id}", name="products")
+     */
+    public function showProducts(ManagerRegistry $doctrine, int $id): Response
+    {
+        $category = $doctrine->getRepository(Category::class)->find($id);
+
+        $products = $category->getProducts();
+
+        return $this->render('product.html.twig', array(
+            'products' => $products,
+            'category' => $category->getName()
+        ));
     }
 }

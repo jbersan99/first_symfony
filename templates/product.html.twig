@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Productos {{category}}</title>
+    </head>
+    <body>
+        <h1> Los Productos que estan en la categoria {{category}} son:  </h1>
+        {% for product in products %}
+            <li>{{ product.name }}</li>
+        {% endfor %}
+    </body>
+</html>
