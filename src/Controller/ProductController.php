@@ -8,28 +8,25 @@ use App\Entity\Product;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
-use App\Repository\ProductRepository;
+
 
 class ProductController extends AbstractController
 {
     /**
-     * @Route("/product/{category_name}", name="create_product")
+     * @Route("/product/{product_name}/{category_name}", name="create_product")
      */
-    public function createProduct(ManagerRegistry $doctrine, string $category_name): Response
+    public function createProduct(ManagerRegistry $doctrine, string $product_name, string $category_name): Response
     {
         $category = new Category();
-        $category->setName($category_name);
 
         $product = new Product();
-        $product->setName("Teclado");
+        $product->setName($product_name);
         $product->setPrice(200);
         $product->setDescription('Ergonomic and stylish!');
 
-        $product->setCategory($category);
+        $product->setCategory($category->setName($category_name));
 
         $entityManager = $doctrine->getManager();
-        $entityManager->persist($category);
         $entityManager->persist($product);
         $entityManager->flush();
 
