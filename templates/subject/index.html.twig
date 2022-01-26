@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Listado de Asignaturas</title>
+    </head>
+    <body>
+        <h1> El listado de los asignaturas es: </h1>
+        {% for subject in subjects %}
+            <li> Nombre Asignatura <a href="{{ path('student_has_subject', {'id': subject.id}) }}"> {{ subject.name }} </a> con ID: {{ subject.id }}</li>
+        {% endfor %}
+</html>

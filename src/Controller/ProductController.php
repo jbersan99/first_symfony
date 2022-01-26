@@ -13,18 +13,18 @@ use Symfony\Component\Routing\Annotation\Route;
 class ProductController extends AbstractController
 {
     /**
-     * @Route("/product/{product_name}/{category_name}", name="create_product")
+     * @Route("/product/{product_name}/{category_id}", name="create_product")
      */
-    public function createProduct(ManagerRegistry $doctrine, string $product_name, string $category_name): Response
+    public function createProduct(ManagerRegistry $doctrine, string $product_name, int $category_id): Response
     {
-        $category = new Category();
+        $category = $doctrine->getRepository(Category::class)->find($category_id);
 
         $product = new Product();
         $product->setName($product_name);
         $product->setPrice(200);
         $product->setDescription('Ergonomic and stylish!');
 
-        $product->setCategory($category->setName($category_name));
+        $product->setCategory($category);
 
         $entityManager = $doctrine->getManager();
         $entityManager->persist($product);

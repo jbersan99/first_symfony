@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Alumnos matriculados en {{ subject.name }}</title>
+    </head>
+    <body>
+        <h1> El listado de los alumnos matriculados en {{ subject.name }} es: </h1>
+        {% for student in students %}
+            <li>Nombre Alumno: {{ student.name }} con ID: {{ student.id }}</li>
+        {% endfor %}
+        <hr>
+            <a href="{{ path('all_subjects') }}"> Volver al Listado de Asignaturas </a>
+    </body>
+    </body>
+</html>

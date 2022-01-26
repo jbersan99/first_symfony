@@ -12,27 +12,59 @@ use App\Entity\Subject;
 class StudentController extends AbstractController
 {
     /**
-     * @Route("/student_subject", name="product")
+     * @Route("/new_student/{name_student}", name="create_student")
      */
-    public function index(ManagerRegistry $doctrine): Response
+    public function index(ManagerRegistry $doctrine, string $name_student): Response
     {
-        $subject = new Subject();
-        $subject->setName('Maths');
-
         $student = new Student();
-        $student->setName('Manolo');
-
-        // relates this product to the category
-        //$student->setStudentSubject($subject->getName());
+        $student->setName($name_student);
 
         $entityManager = $doctrine->getManager();
         $entityManager->persist($student);
-        $entityManager->persist($subject);
         $entityManager->flush();
 
         return new Response(
-            'Saved new student with name: '.$student->getName()
-            .' and new subject with name: '.$subject->getName()
+            'Student saved named: '.$student->getName()
         );
+    }
+
+    /**
+     * @Route("/show_student/{id}", name="show_student")
+     */
+    public function show(ManagerRegistry $doctrine, int $id): Response
+    {
+        $student = $doctrine->getRepository(Student::class)->find($id);
+
+        return new Response('Student with id '. $student->getId(). ' named '. $student->getName());
+    }
+
+    /**
+     * @Route("/student_add_subject/{id_student}/{id_subject}", name="add_subject_to_student")
+     */
+    public function addSubject(ManagerRegistry $doctrine, int $id_student, int $id_subject): Response
+    {
+        $student = $doctrine->getRepository(Student::class)->find($id_student);
+
+        $subject = $doctrine->getRepository(Subject::class)->find($id_subject);
+
+        $student->addSubject($subject);
+
+        $entityManager = $doctrine->getManager();
+        $entityManager->persist($student);
+        $entityManager->flush();
+
+        return new Response('Student with name '. $student->getName(). ' has the subject '. $subject->getName());
+    }
+
+    /**
+     * @Route("/students", name="all_students")
+     */
+    public function showStudents(ManagerRegistry $doctrine): Response
+    {
+        $students = $doctrine->getRepository(Student::class)->findAll();
+
+        return $this->render('student/index.html.twig', array(
+            'students' => $students,
+        ));
     }
 }
