@@ -1,12 +1,10 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>Listado de Alumnos</title>
-    </head>
-    <body>
-        <h1> El listado de los alumnos es: </h1>
+{% extends 'base.html.twig' %}
+
+{% block title %}Listado de Alumnos{% endblock %}
+
+{% block body %}
+    <h1> El listado de los alumnos es: </h1>
         {% for student in students %}
             <li>Nombre Alumno: {{ student.name }} con ID: {{ student.id }}</li>
         {% endfor %}
-    </body>
-</html>
+{% endblock %}
