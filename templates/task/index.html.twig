@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Listado de Tareas{% endblock %}
+
+{% block body %}
+<style>
+    .volver {position: absolute; right:0;top:5;}
+</style>
+    <h1> El listado de las tareas es: </h1>
+    <button class="volver"> <a href="{{ path('new_task')}}"> Crear nueva tarea </a></button>
+    {% if tasks != null %}
+        {% for task in tasks %}
+            <li> Nombre Tarea {{ task.name }} con ID: {{ task.id }}, entregar en formato: {{ task.type }} el dia: {{ task.dueDate | date('d-m-Y') }} <button> <a href="{{ path('edit_task' , {'id': task.id})}}"> Editar tarea </a></button> <button> <a href="{{ path('remove_task' , {'id': task.id})}}"> Borrar tarea </a></button> </li>
+        {% endfor %}
+    {% else %}
+        <h3> No hay tareas disponibles, crea la primera para empezar </h3>
+    {% endif %}
+{% endblock %}

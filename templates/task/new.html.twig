@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Task{% endblock %}
+
+{% block body %}
+<style>
+    .volver {position: absolute; right:0;top:5;}
+</style>
+<button class="volver"> <a href="{{ path('tasks')}}"> Volver a Tareas </a></button>
+{{form(form)}}
+{% endblock %}
