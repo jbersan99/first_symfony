@@ -91,8 +91,6 @@ class TaskController extends AbstractController
     {
         $task = $doctrine->getRepository(Task::class)->find($id);
 
-        var_dump($task);
-
         $entityManager = $doctrine->getManager();
         $entityManager->remove($task);
         $entityManager->flush();
